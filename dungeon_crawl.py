@@ -1,49 +1,48 @@
-#Dungeon Crawl
+#dungeon Crawl
 import random
 
-HERO = ' H '
-TRAP = ' T '
-TREASURE = ' X '
-SPACE_MARKER = ' . '
-EASY = 3
-MEDIUM = 7
-HARD = 11
-MAX_SIZE = MEDIUM
-DUNGEON = []
+hero = ' H '
+trap = ' T '
+treasure = ' X '
+move_tile = ' . '
+easy = 3
+medium = 7
+hard = 11
+max_size = medium
+dungeon = []
 game_over = False
 
 '''#Get and Set the difficulty level
 def setDifficulty():
-    difficulty = input('Set your challenge level:\n E = Easy\n M = Medium\n H = Hard')
+    difficulty = input('Set your challenge level:\n E = easy\n M = medium\n H = hard')
     if set_max.upper() == 'H':
-        difficulty = HARD
+        difficulty = hard
     elif set_max.upper() == 'M':
-        difficulty = MEDIUM
+        difficulty = medium
     else:
-        difficulty = EASY
+        difficulty = easy
     return difficulty'''
 
-#Create the Dungeon to size of input
-def buildGameBoard(dungeon_floor):
-    #iterate through each row on the dungeon floor, adding a SPACE_MAKER for each position
-    for row in range(MAX_SIZE):
+#Creates a basic dungeon boundaries, populated with the string value ' . '.
+def build_game_board(dungeon_floor):
+    # Creates max_size number of rows
+    for row in range(max_size):
         list_row = []
-        #iterate through each column and at the end of the row start a new line
-        for column in range(MAX_SIZE):
-            list_row.append(SPACE_MARKER)
-            dungeon_floor.append(list_row)
-        return dungeon_floor
+        # Creates max_size number of columns
+        for column in range(max_size):
+            list_row.append(move_tile)
+        dungeon_floor.append(list_row)
+    return dungeon_floor
 
 #Show the dungeon as in its current state
-def showDungeon(dungeon_floor):
-    print('Move your (H)ero through the dungeon and find the treasure (X) if you dare, but beware of deadly (T)RAPS!\n')
+def show_dungeon(dungeon_floor):
     game_board = ''
     #iterate through each row
     for row in dungeon_floor:
         #show the row
         show_row = ''
         #iterate through each column
-        for column in dungeon_floor:
+        for column in row:
             #add columns to the row
             show_row += column
         #at row end, move down to start new row
@@ -53,50 +52,50 @@ def showDungeon(dungeon_floor):
     #show the completed dungeon
     print(game_board)
 
-"""Now that the base dungeon_floor is set up, 
-    add traps, treasure, and the player to 
+"""Now that the base dungeon_floor is set up,
+    add traps, treasure, and the player to
     complete the creation of the dungeon"""
-def createDungeon(dungeon_floor, num_traps):
-    #creates the dungeon of MAX_SIZE by MAX_SIZE
-    dungeon_floor = buildGameBoard(dungeon_floor)
+def create_dungeon(dungeon_floor, num_traps):
+    #creates the dungeon of max_size by max_size
+    dungeon_floor = build_game_board(dungeon_floor)
     #set traps on the dungeon floor in  random locations
     for each in range(num_traps):
         trap_set = False
         while (not trap_set):
             #pick random location
-            row_t = random.randrange(MAX_SIZE)
-            column_t = random.randrange(MAX_SIZE)
+            row_t = random.randrange(max_size)
+            column_t = random.randrange(max_size)
             #is the square open?
-            if dungeon_floor[row_t][column_t] != TRAP:
-                dungeon_floor[row_t][column_t] = TRAP
+            if dungeon_floor[row_t][column_t] != trap:
+                dungeon_floor[row_t][column_t] = trap
                 trap_set = True
     #drop loot in random location
     loot_drop = False
     while (not loot_drop):
         #pick random location
-        row_x = random.randrange(MAX_SIZE)
-        column_x = random.randrange(MAX_SIZE)
+        row_x = random.randrange(max_size)
+        column_x = random.randrange(max_size)
         #is the square open?
-        if dungeon_floor[row_x][column_x] != TRAP:
-            dungeon_floor[row_x][column_x] = TREASURE
+        if dungeon_floor[row_x][column_x] != trap:
+            dungeon_floor[row_x][column_x] = treasure
             loot_drop = True
     #set dungeon entry point
     h_spawn = False
     while (not h_spawn):
         #pick random location
-        row_h = random.randrange(MAX_SIZE)
-        column_h = random.randrange(MAX_SIZE)
+        row_h = random.randrange(max_size)
+        column_h = random.randrange(max_size)
         #is the square open?
-        if dungeon_floor[row_h][column_h] != TRAP and dungeon_floor[row_h][column_h] != TREASURE:
-            dungeon_floor[row_h][column_h] = HERO
+        if dungeon_floor[row_h][column_h] != trap and dungeon_floor[row_h][column_h] != treasure:
+            dungeon_floor[row_h][column_h] = hero
             h_spawn = True
     return dungeon_floor
 
 #Set number of traps based on difficulty
-def numTraps(MAX_SIZE):
-    if MAX_SIZE == EASY:
+def define_traps(max_size):
+    if max_size == easy:
         num_traps = 1
-    elif MAX_SIZE == MEDIUM:
+    elif max_size == medium:
         num_traps = random.randrange(2,4)
     else:
         num_traps = random.randrange(3,7)
@@ -127,31 +126,31 @@ def assign_move(dungeon_floor):
     h_row = -1
     h_col = -1
     for row in range(len(dungeon_floor)):
-        if HERO in dungeon_floor[row]:
+        if hero in dungeon_floor[row]:
             h_row = row
-            h_col = dungeon_floor[row].index(HERO)
+            h_col = dungeon_floor[row].index(hero)
     start_move = (h_row, h_col)
     '''assign movement:
         L, R = col
         U, D = row
-        L, D = -
-        R, U = +'''
+        L, U = -
+        R, D = +'''
     if move_hero =='L':
         h_col -= 1
     elif move_hero =='R':
         h_col += 1
     elif move_hero =='U':
-        h_row += 1
-    elif move_hero =='D':
         h_row -= 1
+    elif move_hero =='D':
+        h_row += 1
     end_move = (h_row, h_col)
     return start_move, end_move
 
 def check_in_bounds(hero_pos):
     h_row, h_col = hero_pos
-    if h_row < 0 or h_row >= MAX_SIZE:
+    if h_row < 0 or h_row >= max_size:
         return True
-    elif h_col < 0 or h_col >= MAX_SIZE:
+    elif h_col < 0 or h_col >= max_size:
         return True
     else:
         return False
@@ -169,41 +168,42 @@ def update_dungeon(dungeon_floor, start_move, end_move):
     end_row, end_col = end_move
     if check_in_bounds(end_move):
         print('Your hero fell to their death. Game over.')
-        dungeon_floor[start_row][start_col] = HERO
+        dungeon_floor[start_row][start_col] = hero
         game_over = True
-    elif check_move(dungeon_floor, end_move, TRAP):
+    elif check_move(dungeon_floor, end_move, trap):
         print('You killed your hero by moving them onto a trap. You murderer! How do you sleep at night?')
-        dungeon_floor[end_row][end_col] = HERO
-        dungeon_floor[start_row][start_col] = SPACE_MARKER
+        dungeon_floor[end_row][end_col] = hero
+        dungeon_floor[start_row][start_col] = move_tile
         game_over = True
-    elif check_move(dungeon_floor, end_move, TREASURE):
+    elif check_move(dungeon_floor, end_move, treasure):
         print('You found the treasure! You win! Drinks at the tavern are on YOU tonight!')
-        dungeon_floor[end_row][end_col] = HERO
-        dungeon_floor[start_row][start_col] = SPACE_MARKER
-        game_over = True 
+        dungeon_floor[end_row][end_col] = hero
+        dungeon_floor[start_row][start_col] = move_tile
+        game_over = True
     else:
-        dungeon_floor[end_row][end_col] = HERO
-        dungeon_floor[start_row][start_col] = SPACE_MARKER
+        dungeon_floor[end_row][end_col] = hero
+        dungeon_floor[start_row][start_col] = move_tile
         game_over = False
     return game_over, dungeon_floor
 
 #start the dungeon crawl
 def play_game(dungeon_floor, game_over = False):
-    '''difficulty = input('Set your challenge level:\n E = Easy\n M = Medium\n H = Hard')
+    '''difficulty = input('Set your challenge level:\n E = (E)asy\n M = (M)edium\n H = (H)ard')
     if difficulty.upper() == 'H':
-        difficulty = HARD
+        difficulty = hard
     elif difficulty.upper() == 'M':
-        difficulty = MEDIUM
+        difficulty = medium
     else:
-        difficulty = EASY
-    MAX_SIZE = difficulty'''
-    num_traps = numTraps(MAX_SIZE)
-    createDungeon(dungeon_floor, num_traps)
-    showDungeon(dungeon_floor)
+        difficulty = easy
+    max_size = difficulty'''
+    print('Move your (H)ero through the dungeon and find the treasure (X) if you dare, but beware of deadly (T)RAPS!\n')
+    num_traps = define_traps(max_size)
+    create_dungeon(dungeon_floor, num_traps)
+    show_dungeon(dungeon_floor)
     while (not game_over):
         hero_start_move, hero_end_move = assign_move(dungeon_floor)
         game_over, dungeon_floor = update_dungeon(dungeon_floor, hero_start_move, hero_end_move)
-        showDungeon(dungeon_floor)
+        show_dungeon(dungeon_floor)
     play_again = input('Do you dare to brave the dungeon again? Y/y to play again, or any other key to give up and join the rest of the quitters.')
     if play_again.upper() == 'Y':
         new_dungeon = []
@@ -212,4 +212,4 @@ def play_game(dungeon_floor, game_over = False):
         print('Good day, to you')
         print('I SAID GOOD DAY!')
 
-play_game(DUNGEON)
+play_game(dungeon)

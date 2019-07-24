@@ -127,9 +127,9 @@ def assign_move(dungeon_floor):
     h_row = -1
     h_col = -1
     for row in range(len(dungeon_floor)):
-        if H in dungeon_floor[row]:
+        if HERO in dungeon_floor[row]:
             h_row = row
-            h_col = dungeon_floor[row].index(H)
+            h_col = dungeon_floor[row].index(HERO)
     start_move = (h_row, h_col)
     '''assign movement:
         L, R = col
